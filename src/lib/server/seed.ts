@@ -4,12 +4,21 @@ import { v4 as uuidv4 } from 'uuid';
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 
 function getGoogleAuth() {
-	const credentialsBase64 = process.env.GOOGLE_CREDENTIALS_BASE64;
-	if (!credentialsBase64) {
-		throw new Error('GOOGLE_CREDENTIALS_BASE64 environment variable is not set');
+	const privateKey = process.env.GOOGLE_PRIVATE_KEY;
+	const clientEmail = process.env.GOOGLE_CLIENT_EMAIL;
+
+	if (!privateKey || !clientEmail) {
+		throw new Error('GOOGLE_PRIVATE_KEY and GOOGLE_CLIENT_EMAIL environment variables must be set');
 	}
 
-	const credentials = JSON.parse(Buffer.from(credentialsBase64, 'base64').toString('utf-8'));
+	// Handle escaped newlines
+	const formattedKey = privateKey.replace(/\\n/g, '\n');
+
+	const credentials = {
+		type: 'service_account' as const,
+		client_email: clientEmail,
+		private_key: formattedKey
+	};
 
 	return new google.auth.GoogleAuth({
 		credentials,

@@ -7,8 +7,9 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - GOOGLE_CREDENTIALS_BASE64=${GOOGLE_CREDENTIALS_BASE64}
       - SPREADSHEET_ID=${SPREADSHEET_ID}
+      - GOOGLE_CLIENT_EMAIL=${GOOGLE_CLIENT_EMAIL}
+      - GOOGLE_PRIVATE_KEY=${GOOGLE_PRIVATE_KEY}
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/"]
@@ -22,8 +23,9 @@ services:
     volumes:
       - .:/app
     environment:
-      - GOOGLE_CREDENTIALS_BASE64=${GOOGLE_CREDENTIALS_BASE64}
       - SPREADSHEET_ID=${SPREADSHEET_ID}
+      - GOOGLE_CLIENT_EMAIL=${GOOGLE_CLIENT_EMAIL}
+      - GOOGLE_PRIVATE_KEY=${GOOGLE_PRIVATE_KEY}
     command: sh -c "npm install && npx tsx scripts/seed.ts"
     profiles:
       - tools

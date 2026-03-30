@@ -4,37 +4,26 @@ import type { TransaksiZakat, ReferensiHarga } from '../types/zakat';
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 
 function getGoogleAuth() {
-	// Support both formats:
-	// 1. GOOGLE_PRIVATE_KEY + GOOGLE_CLIENT_EMAIL (recommended)
-	// 2. GOOGLE_CREDENTIALS_BASE64 (legacy)
-	
 	const privateKey = process.env.GOOGLE_PRIVATE_KEY;
 	const clientEmail = process.env.GOOGLE_CLIENT_EMAIL;
-	const credentialsBase64 = process.env.GOOGLE_CREDENTIALS_BASE64;
 
-	if (privateKey && clientEmail) {
-		// Handle escaped newlines
-		const formattedKey = privateKey.replace(/\\n/g, '\n');
-		const credentials = {
-			type: 'service_account' as const,
-			client_email: clientEmail,
-			private_key: formattedKey
-		};
-		return new google.auth.GoogleAuth({
-			credentials,
-			scopes: SCOPES
-		});
+	if (!privateKey || !clientEmail) {
+		throw new Error('GOOGLE_PRIVATE_KEY and GOOGLE_CLIENT_EMAIL environment variables must be set');
 	}
 
-	if (credentialsBase64) {
-		const credentials = JSON.parse(Buffer.from(credentialsBase64, 'base64').toString('utf-8'));
-		return new google.auth.GoogleAuth({
-			credentials,
-			scopes: SCOPES
-		});
-	}
+	// Handle escaped newlines
+	const formattedKey = privateKey.replace(/\\n/g, '\n');
 
-	throw new Error('Either GOOGLE_PRIVATE_KEY + GOOGLE_CLIENT_EMAIL or GOOGLE_CREDENTIALS_BASE64 must be set');
+	const credentials = {
+		type: 'service_account' as const,
+		client_email: clientEmail,
+		private_key: formattedKey
+	};
+
+	return new google.auth.GoogleAuth({
+		credentials,
+		scopes: SCOPES
+	});
 }
 
 function getSpreadsheetId(): string {
