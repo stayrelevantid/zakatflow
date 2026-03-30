@@ -185,11 +185,12 @@ if (pendapatan_bersih >= nisab) {
 | Kategori          | Nisab (Ambang Batas)      | Kadar Zakat  | Input yang Dibutuhkan                         |
 | ----------------- | ------------------------- | ------------ | --------------------------------------------- |
 | Zakat Fitrah      | Per jiwa                  | 2,5 kg beras | Jumlah orang/jiwa                             |
-| Zakat Emas/Perak  | 85g (Emas) / 595g (Perak) | 2,5%         | Gram murni                                    |
-| Zakat Penghasilan | Setara 85g emas/tahun     | 2,5%         | Gaji bulanan/tahunan                          |
-| Zakat Perdagangan | Setara 85g emas           | 2,5%         | Modal + Kas + Piutang - Hutang                |
-| Zakat Pertanian   | 653 kg gabah              | 5% / 10%     | Hasil panen (kg) + toggle irigasi/tadah hujan |
-| Zakat Peternakan/Perikanan | Setara 85g emas | 2,5% | Pendapatan bersih |
+| Zakat Emas/Perak  | 85g (Emas) / 595g (Perak) | 2,5% | Gram murni                                    |
+| Zakat Penghasilan | Setara 85g emas/tahun | 2,5% | Gaji bulanan/tahunan                          |
+| Zakat Perdagangan | Setara 85g emas | 2,5% | Modal + Kas + Piutang - Hutang                |
+| Zakat Pertanian   | 653 kg gabah | 5% / 10% | Hasil panen (kg) + toggle irigasi/tadah hujan |
+| Zakat Peternakan | Setara 85g emas | 2,5% | Jenis hewan, jumlah, nilai per hewan |
+| Zakat Perikanan | Setara 85g emas | 2,5% | Pendapatan bersih |
 
 ### 3.3 Manajemen Data (Google Sheets)
 
@@ -517,7 +518,8 @@ stringData:
 /kalkulator/penghasilan → Form Zakat Penghasilan
 /kalkulator/perdagangan → Form Zakat Perdagangan
 /kalkulator/pertanian → Form Zakat Pertanian
-/kalkulator/peternakan → Form Zakat Peternakan/Perikanan
+/kalkulator/peternakan   → Form Zakat Peternakan
+/kalkulator/perikanan     → Form Zakat Perikanan
 /riwayat              → Riwayat Pembayaran Zakat
 /referensi            → Tabel Referensi Harga (Emas, Beras, dll)
 ```
