@@ -164,7 +164,7 @@ if (hasil_panen_kg >= 653) {
 }
 ```
 
-#### F. Zakat Hasil Kebun / Perikanan
+#### F. Zakat Peternakan/Perikanan
 
 | Parameter       | Nilai               |
 | --------------- | ------------------- |
@@ -189,7 +189,7 @@ if (pendapatan_bersih >= nisab) {
 | Zakat Penghasilan | Setara 85g emas/tahun     | 2,5%         | Gaji bulanan/tahunan                          |
 | Zakat Perdagangan | Setara 85g emas           | 2,5%         | Modal + Kas + Piutang - Hutang                |
 | Zakat Pertanian   | 653 kg gabah              | 5% / 10%     | Hasil panen (kg) + toggle irigasi/tadah hujan |
-| Hasil Kebun/Ikan  | Setara 85g emas           | 2,5%         | Pendapatan bersih                             |
+| Zakat Peternakan/Perikanan | Setara 85g emas | 2,5% | Pendapatan bersih |
 
 ### 3.3 Manajemen Data (Google Sheets)
 
@@ -517,7 +517,7 @@ stringData:
 /kalkulator/penghasilan → Form Zakat Penghasilan
 /kalkulator/perdagangan → Form Zakat Perdagangan
 /kalkulator/pertanian → Form Zakat Pertanian
-/kalkulator/kebun     → Form Zakat Hasil Kebun/Ikan
+/kalkulator/peternakan → Form Zakat Peternakan/Perikanan
 /riwayat              → Riwayat Pembayaran Zakat
 /referensi            → Tabel Referensi Harga (Emas, Beras, dll)
 ```
