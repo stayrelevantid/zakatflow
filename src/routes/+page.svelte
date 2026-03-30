@@ -27,7 +27,7 @@
 
 	onMount(async () => {
 		try {
-			const data = await getAllTransaksi();
+			const data = await fetchAllTransaksi();
 			transaksi = data;
 			
 			// Calculate stats
