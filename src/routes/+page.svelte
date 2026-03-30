@@ -2,7 +2,6 @@
 	import { Card, Button } from '$lib/components/ui';
 	import { fly, fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
-	import { fetchAllTransaksi } from '$lib/services/api';
 
 	type Transaksi = {
 		id: string;
@@ -25,21 +24,32 @@
 	let belumBayar = $state(0);
 	let jumlahTransaksi = $state(0);
 
-	onMount(async () => {
+	async function loadData() {
+		loading = true;
+		error = null;
+		
 		try {
-			const data = await fetchAllTransaksi();
+			const response = await fetch('/api/transaksi');
+			if (!response.ok) {
+				throw new Error('Gagal memuat data');
+			}
+			const data = await response.json();
 			transaksi = data;
 			
 			// Calculate stats
 			jumlahTransaksi = data.length;
-			totalZakat = data.reduce((sum, t) => sum + t.zakatWajib, 0);
-			sudahBayar = data.filter(t => t.status === 'Sudah Bayar').reduce((sum, t) => sum + t.zakatWajib, 0);
-			belumBayar = data.filter(t => t.status === 'Belum Bayar').reduce((sum, t) => sum + t.zakatWajib, 0);
+			totalZakat = data.reduce((sum: number, t: Transaksi) => sum + t.zakatWajib, 0);
+			sudahBayar = data.filter((t: Transaksi) => t.status === 'Sudah Bayar').reduce((sum: number, t: Transaksi) => sum + t.zakatWajib, 0);
+			belumBayar = data.filter((t: Transaksi) => t.status === 'Belum Bayar').reduce((sum: number, t: Transaksi) => sum + t.zakatWajib, 0);
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Gagal memuat data';
 		} finally {
 			loading = false;
 		}
+	}
+
+	onMount(() => {
+		loadData();
 	});
 
 	function formatCurrency(value: number): string {
@@ -96,6 +106,7 @@
 	{:else if error}
 		<div class="p-4 bg-red-500/20 border border-red-500/30 rounded-xl">
 			<p class="text-red-400">{error}</p>
+			<Button onclick={loadData} class="mt-2">Coba Lagi</Button>
 		</div>
 	{:else}
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
