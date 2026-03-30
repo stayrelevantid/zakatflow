@@ -7,9 +7,9 @@
 	<title>Dashboard - ZakatFlow</title>
 </svelte:head>
 
-<div class="max-w-7xl mx-auto" transition:fade={{ duration: 300 }}>
+<div class="max-w-7xl mx-auto" transition:fade={{ duration: 400 }}>
 	<div class="mb-8">
-		<h1 class="text-4xl font-display font-bold text-white mb-2" transition:fly={{ y: -20, duration: 500 }}>
+		<h1 class="text-4xl font-display font-bold text-white mb-2" transition:fly={{ y: -20, duration: 600 }}>
 			🕌 Dashboard Zakat
 		</h1>
 		<p class="text-white/60 text-lg">Kelola dan pantau pembayaran zakat Anda</p>
@@ -22,7 +22,7 @@
 			{ title: 'Belum Bayar', value: 'Rp 0', icon: '⏳', color: 'yellow' },
 			{ title: 'Transaksi', value: '0', icon: '📋', color: 'blue' }
 		] as stat, i}
-			<div transition:fly={{ y: 20, delay: i * 100, duration: 500 }}>
+			<div transition:fly={{ y: 30, delay: i * 80, duration: 500 }}>
 				<Card class="p-6">
 					<div class="flex items-center justify-between mb-2">
 						<span class="text-3xl">{stat.icon}</span>
@@ -35,7 +35,7 @@
 	</div>
 
 	<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-		<div class="lg:col-span-2">
+		<div class="lg:col-span-2" transition:fly={{ y: 20, delay: 400, duration: 500 }}>
 			<Card class="p-6">
 				<h2 class="text-xl font-display font-semibold text-white mb-4">📊 Ringkasan Zakat</h2>
 				<div class="h-64 flex items-center justify-center border border-dashed border-white/20 rounded-xl">
@@ -44,7 +44,7 @@
 			</Card>
 		</div>
 
-		<div>
+		<div transition:fly={{ y: 20, delay: 500, duration: 500 }}>
 			<Card class="p-6">
 				<h2 class="text-xl font-display font-semibold text-white mb-4">⚡ Aksi Cepat</h2>
 				<div class="space-y-3">
@@ -68,7 +68,7 @@
 		</div>
 	</div>
 
-	<div class="mt-6">
+	<div class="mt-6" transition:fly={{ y: 20, delay: 600, duration: 500 }}>
 		<Card class="p-6">
 			<h2 class="text-xl font-display font-semibold text-white mb-4">📜 Transaksi Terakhir</h2>
 			<div class="h-48 flex items-center justify-center border border-dashed border-white/20 rounded-xl">

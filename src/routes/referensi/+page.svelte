@@ -7,8 +7,8 @@
 	<title>Referensi Harga - ZakatFlow</title>
 </svelte:head>
 
-<div class="max-w-7xl mx-auto" transition:fade={{ duration: 300 }}>
-	<div class="mb-8" transition:fly={{ y: -20, duration: 500 }}>
+<div class="max-w-7xl mx-auto" transition:fade={{ duration: 400 }}>
+	<div class="mb-8" transition:fly={{ y: -20, duration: 600 }}>
 		<h1 class="text-4xl font-display font-bold text-white mb-2">💰 Referensi Harga</h1>
 		<p class="text-white/60 text-lg">Harga referensi untuk kalkulasi zakat</p>
 	</div>

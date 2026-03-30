@@ -10,8 +10,7 @@
 	}
 
 	let { class: className, label, error, id, value = $bindable(''), ...restProps }: Props = $props();
-
-	const inputId = id || `input-${Math.random().toString(36).slice(2, 11)}`;
+	const inputId = id ?? `input-${Math.random().toString(36).slice(2, 11)}`;
 </script>
 
 {#if label}

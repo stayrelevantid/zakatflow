@@ -7,8 +7,8 @@
 	<title>Kalkulator Zakat - ZakatFlow</title>
 </svelte:head>
 
-<div class="max-w-4xl mx-auto" transition:fade={{ duration: 300 }}>
-	<div class="mb-8" transition:fly={{ y: -20, duration: 500 }}>
+<div class="max-w-4xl mx-auto" transition:fade={{ duration: 400 }}>
+	<div class="mb-8" transition:fly={{ y: -20, duration: 600 }}>
 		<h1 class="text-4xl font-display font-bold text-white mb-2">🧮 Kalkulator Zakat</h1>
 		<p class="text-white/60 text-lg">Pilih jenis zakat yang ingin dihitung</p>
 	</div>
@@ -22,7 +22,7 @@
 			{ href: '/kalkulator/pertanian', title: 'Zakat Pertanian', icon: '🌾', desc: 'Zakat dari hasil pertanian' },
 			{ href: '/kalkulator/kebun', title: 'Zakat Kebun/Ikan', icon: '🌴', desc: 'Zakat dari hasil kebun dan perikanan' }
 		] as item, i}
-			<div transition:fly={{ y: 20, delay: i * 50, duration: 500 }}>
+			<div transition:fly={{ y: 30, delay: i * 60, duration: 500 }}>
 				<a href={item.href} class="block group">
 					<Card class="p-6 hover:border-primary-500/50 transition-all duration-300 hover:scale-[1.02] cursor-pointer">
 						<div class="flex items-start gap-4">
