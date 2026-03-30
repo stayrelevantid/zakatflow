@@ -62,15 +62,27 @@ export interface ZakatPertanianInput {
 }
 
 export interface ZakatPeternakanInput {
-	nilaiHewan: number;
-	jenisHewan: 'sapi' | 'kerbau' | 'kambing' | 'unta' | 'lainnya';
+	jenisHewan: 'sapi' | 'kambing' | 'unta';
 	jumlahHewan: number;
-	hargaEmasPerGram: number;
+	// Nilai hewan untuk informasi saja, tidak digunakan dalam perhitungan nisab syariah
+	nilaiPerHewan?: number;
 }
 
 export interface ZakatPerikananInput {
 	pendapatanBersih: number;
 	hargaEmasPerGram: number;
+}
+
+// Zakat Peternakan result dengan detail hewan
+export interface ZakatPeternakanResult {
+	nisab: number; // jumlah minimum hewan
+	jumlahHewan: number;
+	jenisHewan: 'sapi' | 'kambing' | 'unta';
+	wajibZakat: boolean;
+	zakatHewan: number; // jumlah hewan yang wajib dizakatkan
+	zakatUang?: number; // nilai dalam uang jika dikonversi
+	kadar: string;
+	keterangan: string;
 }
 
 export interface ZakatCalculationResult {
