@@ -4,24 +4,17 @@
 	import { isLoading } from '$lib/stores/zakat';
 	import { createTransaksi } from '$lib/services/api';
 
-	let jenisHewan = $state<'sapi' | 'kerbau' | 'kambing' | 'unta' | 'lainnya'>('sapi');
-	let jumlahHewan = $state<number>(0);
-	let nilaiPerHewan = $state<number>(0);
+	let pendapatanBersih = $state<number>(0);
 	let hargaEmas = $state<number>(1100000);
-	let result = $state<{ nisab: number; nilaiHarta: number; wajibZakat: boolean; zakatWajib: number } | null>(null);
+	let result = $state<{ nisab: number; wajibZakat: boolean; zakatWajib: number } | null>(null);
 	let error = $state<string | null>(null);
 	let success = $state<string | null>(null);
 
 	function calculate() {
 		error = null;
 		
-		if (jumlahHewan <= 0) {
-			error = 'Jumlah hewan harus lebih dari 0';
-			return;
-		}
-		
-		if (nilaiPerHewan <= 0) {
-			error = 'Nilai per hewan harus lebih dari 0';
+		if (pendapatanBersih <= 0) {
+			error = 'Pendapatan bersih harus lebih dari 0';
 			return;
 		}
 		
@@ -32,11 +25,10 @@
 
 		// Nisab: setara 85 gram emas
 		const nisab = 85 * hargaEmas;
-		const nilaiHarta = jumlahHewan * nilaiPerHewan;
-		const wajibZakat = nilaiHarta >= nisab;
-		const zakatWajib = wajibZakat ? nilaiHarta * 0.025 : 0;
+		const wajibZakat = pendapatanBersih >= nisab;
+		const zakatWajib = wajibZakat ? pendapatanBersih * 0.025 : 0;
 		
-		result = { nisab, nilaiHarta, wajibZakat, zakatWajib };
+		result = { nisab, wajibZakat, zakatWajib };
 	}
 
 	async function handleSave() {
@@ -45,14 +37,12 @@
 			return;
 		}
 
-		const jenisLabel = { sapi: 'Sapi', kerbau: 'Kerbau', kambing: 'Kambing/Domba', unta: 'Unta', lainnya: 'Lainnya' };
-
 		try {
 			await createTransaksi({
-				kategori: 'Zakat Peternakan',
-				nilaiHarta: result.nilaiHarta,
+				kategori: 'Zakat Perikanan',
+				nilaiHarta: pendapatanBersih,
 				zakatWajib: result.zakatWajib,
-				metode: `${jumlahHewan} ekor ${jenisLabel[jenisHewan]} × Rp ${nilaiPerHewan.toLocaleString('id-ID')}`,
+				metode: '2.5% dari pendapatan bersih perikanan',
 				status: 'Belum Bayar',
 				catatan: result.wajibZakat ? 'Wajib zakat' : 'Belum mencapai nisab'
 			});
@@ -72,9 +62,7 @@
 	}
 
 	function resetForm() {
-		jenisHewan = 'sapi';
-		jumlahHewan = 0;
-		nilaiPerHewan = 0;
+		pendapatanBersih = 0;
 		hargaEmas = 1100000;
 		result = null;
 		error = null;
@@ -83,7 +71,7 @@
 </script>
 
 <svelte:head>
-	<title>Zakat Peternakan - ZakatFlow</title>
+	<title>Zakat Perikanan - ZakatFlow</title>
 </svelte:head>
 
 <div class="max-w-2xl mx-auto" transition:fade={{ duration: 400 }}>
@@ -95,31 +83,16 @@
 	</a>
 
 	<div class="mb-8" transition:fly={{ y: -20, duration: 600 }}>
-		<h1 class="text-4xl font-display font-bold text-white mb-2">🐄 Zakat Peternakan</h1>
-		<p class="text-white/60 text-lg">Hitung zakat dari hasil ternak (sapi, kerbau, kambing, unta)</p>
+		<h1 class="text-4xl font-display font-bold text-white mb-2">🐟 Zakat Perikanan</h1>
+		<p class="text-white/60 text-lg">Hitung zakat dari hasil usaha perikanan/budidaya ikan</p>
 	</div>
 
 	<div transition:fly={{ y: 20, delay: 100, duration: 500 }}>
 		<Card class="p-8">
 			<form class="space-y-6">
 				<div>
-					<label class="label mb-3">Jenis Hewan Ternak</label>
-					<select bind:value={jenisHewan} class="glass-input w-full px-4 py-3 rounded-xl">
-						<option value="sapi">Sapi</option>
-						<option value="kerbau">Kerbau</option>
-						<option value="kambing">Kambing/Domba</option>
-						<option value="unta">Unta</option>
-						<option value="lainnya">Lainnya</option>
-					</select>
-				</div>
-
-				<div>
-					<Input label="Jumlah Hewan" type="number" placeholder="Masukkan jumlah hewan" bind:value={jumlahHewan} min="1" />
-				</div>
-
-				<div>
-					<Input label="Nilai per Hewan (Rp)" type="number" placeholder="Nilai jual per ekor" bind:value={nilaiPerHewan} min="0" />
-					<p class="text-white/40 text-xs mt-1">Perkiraan nilai jual hewan ternak</p>
+					<Input label="Pendapatan Bersih (Rp)" type="number" placeholder="Pendapatan bersih dari usaha perikanan" bind:value={pendapatanBersih} min="0" />
+					<p class="text-white/40 text-xs mt-1">Pendapatan setelah dikurangi biaya operasional</p>
 				</div>
 
 				<div>
@@ -128,21 +101,21 @@
 				</div>
 
 				<div class="bg-white/5 rounded-xl p-4 border border-white/10">
-					<h3 class="text-white font-semibold mb-2">Informasi Zakat Peternakan</h3>
+					<h3 class="text-white font-semibold mb-2">Informasi Zakat Perikanan</h3>
 					<ul class="text-white/60 text-sm space-y-1">
 						<li>• Nisab: Setara 85 gram emas</li>
 						<li>• Kadar Zakat: 2,5%</li>
-						<li>• Dihitung dari nilai hewan ternak</li>
-						<li>• Berlaku untuk: sapi, kerbau, kambing, unta, dll</li>
+						<li>• Dihitung dari pendapatan bersih</li>
+						<li>• Berlaku untuk: budidaya ikan, tambak, dll</li>
 					</ul>
 				</div>
 
 				{#if result}
 					<div class="bg-primary-500/20 border border-primary-500/30 rounded-xl p-4">
-						<p class="text-white/60 text-sm mb-1">Total Zakat Peternakan</p>
+						<p class="text-white/60 text-sm mb-1">Total Zakat Perikanan</p>
 						<p class="text-3xl font-bold text-primary-400">{formatCurrency(result.zakatWajib)}</p>
 						<div class="mt-2 text-white/40 text-xs space-y-1">
-							<p>Nilai hewan: {formatCurrency(result.nilaiHarta)}</p>
+							<p>Pendapatan bersih: {formatCurrency(pendapatanBersih)}</p>
 							<p>Nisab: {formatCurrency(result.nisab)}</p>
 							<p class="{result.wajibZakat ? 'text-green-400' : 'text-yellow-400'}">
 								{result.wajibZakat ? '✓ Wajib zakat' : '✗ Belum mencapai nisab'}

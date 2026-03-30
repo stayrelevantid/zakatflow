@@ -93,7 +93,8 @@
 						<option value="Zakat Penghasilan">Zakat Penghasilan</option>
 						<option value="Zakat Perdagangan">Zakat Perdagangan</option>
 						<option value="Zakat Pertanian">Zakat Pertanian</option>
-						<option value="Zakat Peternakan/Perikanan">Zakat Peternakan/Perikanan</option>
+						<option value="Zakat Peternakan">Zakat Peternakan</option>
+						<option value="Zakat Perikanan">Zakat Perikanan</option>
 					</select>
 					<select bind:value={filterStatus} class="glass-input px-4 py-2 rounded-lg">
 						<option value="">Semua Status</option>

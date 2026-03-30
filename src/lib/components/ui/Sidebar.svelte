@@ -8,7 +8,8 @@
 		{ href: '/kalkulator/penghasilan', label: 'Zakat Penghasilan', icon: '💵' },
 		{ href: '/kalkulator/perdagangan', label: 'Zakat Perdagangan', icon: '🏪' },
 		{ href: '/kalkulator/pertanian', label: 'Zakat Pertanian', icon: '🌾' },
-		{ href: '/kalkulator/peternakan', label: 'Zakat Peternakan/Perikanan', icon: '🐄' }
+		{ href: '/kalkulator/peternakan', label: 'Zakat Peternakan', icon: '🐄' },
+		{ href: '/kalkulator/perikanan', label: 'Zakat Perikanan', icon: '🐟' }
 	];
 
 	let isOpen = $state(true);

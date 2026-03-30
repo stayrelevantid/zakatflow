@@ -20,7 +20,8 @@
 			{ href: '/kalkulator/penghasilan', title: 'Zakat Penghasilan', icon: '💵', desc: 'Zakat dari gaji atau penghasilan' },
 			{ href: '/kalkulator/perdagangan', title: 'Zakat Perdagangan', icon: '🏪', desc: 'Zakat dari usaha perdagangan' },
 			{ href: '/kalkulator/pertanian', title: 'Zakat Pertanian', icon: '🌾', desc: 'Zakat dari hasil pertanian' },
-			{ href: '/kalkulator/peternakan', title: 'Zakat Peternakan/Perikanan', icon: '🐄', desc: 'Zakat dari hasil peternakan dan perikanan' }
+			{ href: '/kalkulator/peternakan', title: 'Zakat Peternakan', icon: '🐄', desc: 'Zakat dari hasil ternak' },
+			{ href: '/kalkulator/perikanan', title: 'Zakat Perikanan', icon: '🐟', desc: 'Zakat dari hasil perikanan' }
 		] as item, i}
 			<div transition:fly={{ y: 30, delay: i * 60, duration: 500 }}>
 				<a href={item.href} class="block group">

@@ -7,7 +7,8 @@ export type ZakatCategory =
 	| 'Zakat Penghasilan'
 	| 'Zakat Perdagangan'
 	| 'Zakat Pertanian'
-	| 'Zakat Peternakan/Perikanan';
+	| 'Zakat Peternakan'
+	| 'Zakat Perikanan';
 
 export type PaymentStatus = 'Belum Bayar' | 'Sudah Bayar';
 
@@ -61,6 +62,13 @@ export interface ZakatPertanianInput {
 }
 
 export interface ZakatPeternakanInput {
+	nilaiHewan: number;
+	jenisHewan: 'sapi' | 'kerbau' | 'kambing' | 'unta' | 'lainnya';
+	jumlahHewan: number;
+	hargaEmasPerGram: number;
+}
+
+export interface ZakatPerikananInput {
 	pendapatanBersih: number;
 	hargaEmasPerGram: number;
 }

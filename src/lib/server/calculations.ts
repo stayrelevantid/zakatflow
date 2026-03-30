@@ -5,6 +5,7 @@ import type {
 	ZakatPerdaganganInput,
 	ZakatPertanianInput,
 	ZakatPeternakanInput,
+	ZakatPerikananInput,
 	ZakatCalculationResult
 } from '../types/zakat';
 
@@ -142,9 +143,40 @@ export function calculateZakatPertanian(input: ZakatPertanianInput): ZakatCalcul
 	};
 }
 
-// ========== ZAKAT PETERNAKAN/PERIKAN ==========
+// ========== ZAKAT PETERNAKAN ==========
 
 export function calculateZakatPeternakan(input: ZakatPeternakanInput): ZakatCalculationResult {
+	const { nilaiHewan, jumlahHewan, jenisHewan, hargaEmasPerGram } = input;
+	
+	const nisab = NISAB_EMAS_GRAM * hargaEmasPerGram;
+	const nilaiHarta = nilaiHewan * jumlahHewan;
+	
+	const wajibZakat = nilaiHarta >= nisab;
+	const zakatWajib = wajibZakat ? nilaiHarta * ZAKAT_KADAR : 0;
+
+	const jenisHewanLabel: Record<string, string> = {
+		sapi: 'Sapi/Kerbau',
+		kerbau: 'Kerbau',
+		kambing: 'Kambing/Domba',
+		unta: 'Unta',
+		lainnya: 'Lainnya'
+	};
+
+	return {
+		nisab,
+		nilaiHarta,
+		wajibZakat,
+		zakatWajib,
+		kadar: '2.5%',
+		keterangan: wajibZakat
+			? `Nilai ${jumlahHewan} ekor ${jenisHewanLabel[jenisHewan] || jenisHewan} = Rp ${nilaiHarta.toLocaleString()} melebihi nisab`
+			: `Nilai hewan ternak Rp ${nilaiHarta.toLocaleString()} belum mencapai nisab Rp ${nisab.toLocaleString()}`
+	};
+}
+
+// ========== ZAKAT PERIKANAN ==========
+
+export function calculateZakatPerikanan(input: ZakatPerikananInput): ZakatCalculationResult {
 	const { pendapatanBersih, hargaEmasPerGram } = input;
 	
 	const nisab = NISAB_EMAS_GRAM * hargaEmasPerGram;
@@ -159,8 +191,8 @@ export function calculateZakatPeternakan(input: ZakatPeternakanInput): ZakatCalc
 		zakatWajib,
 		kadar: '2.5%',
 		keterangan: wajibZakat
-			? `Pendapatan bersih Rp ${pendapatanBersih.toLocaleString()} melebihi nisab`
-			: `Pendapatan bersih Rp ${pendapatanBersih.toLocaleString()} belum mencapai nisab`
+			? `Pendapatan bersih dari perikanan Rp ${pendapatanBersih.toLocaleString()} melebihi nisab`
+			: `Pendapatan bersih Rp ${pendapatanBersih.toLocaleString()} belum mencapai nisab Rp ${nisab.toLocaleString()}`
 	};
 }
 
