@@ -26,6 +26,7 @@
 | UI Components | Bits UI (Shadcn-like) |
 | Icons | Lucide Svelte |
 | Language | TypeScript 5.9.3 |
+| Build | Vite 7.3.1 |
 
 ---
 
@@ -71,10 +72,10 @@
 /kalkulator                → Pilih Kategori Zakat
 /kalkulator/fitrah         → Form Zakat Fitrah
 /kalkulator/emas           → Form Zakat Emas/Perak
-/kalkulator/penghasilan   → Form Zakat Penghasilan
-/kalkulator/perdagangan   → Form Zakat Perdagangan
+/kalkulator/penghasilan    → Form Zakat Penghasilan
+/kalkulator/perdagangan    → Form Zakat Perdagangan
 /kalkulator/pertanian      → Form Zakat Pertanian
-/kalkulator/kebun          → Form Zakat Hasil Kebun/Ikan
+/kalkulator/kebun         → Form Zakat Hasil Kebun/Ikan
 /riwayat                   → Riwayat Pembayaran
 /referensi                 → Referensi Harga
 ```
@@ -102,10 +103,30 @@
 
 ### Animasi & Transisi
 
-- `fade` untuk mount halaman
-- `fly` untuk animasi cards dan elements
+- `fade` untuk mount halaman (duration: 400ms)
+- `fly` untuk header/title (duration: 600ms, y: -20)
+- `fly` untuk cards (duration: 500ms, y: 20-30, stagger delay: 60-100ms)
 - Hover effects pada cards dan buttons
 - Active state pada navigasi
+
+---
+
+### Bug Fixes
+
+1. **Tailwind CSS Import Error**
+   - Fixed: Changed from `@import 'tailwindcss'` (v4) to `@tailwind` directives (v3)
+
+2. **Accessibility Warnings**
+   - Fixed: Replaced `href="#"` with `<button>` in Footer
+   - Fixed: Added `for` and `id` attributes to Input component for label association
+   - Fixed: Used `<fieldset>` and `<legend>` for radio button groups
+
+3. **Transition Directive on Components**
+   - Fixed: Removed `transition:` from `<Card>` components (invalid on Svelte components)
+   - Wrapped Cards in `<div>` with transitions applied to wrapper
+
+4. **State Referenced Locally Warning**
+   - Fixed: Simplified Input.svelte to pass `id` prop directly
 
 ---
 
@@ -127,7 +148,8 @@ zakatflow/
 │   │   │       ├── Footer.svelte
 │   │   │       └── index.ts
 │   │   ├── utils/
-│   │   │   └── index.ts           # cn() utility function
+│   │   │   ├── index.ts           # cn() utility function
+│   │   │   └── animations.ts      # Animation presets
 │   │   └── assets/
 │   │       └── favicon.svg
 │   └── routes/
@@ -152,8 +174,21 @@ zakatflow/
 ├── package.json
 ├── eslint.config.js
 ├── .prettierrc
+├── .prettierignore
 └── .gitignore
 ```
+
+---
+
+### Git Commits
+
+| Commit | Description |
+|--------|-------------|
+| `2cc5892` | feat: initialize ZakatFlow with Phase 1 - Foundation & UI Setup |
+| `f83bd9c` | fix: use correct Tailwind CSS v3 directives |
+| `ca4de62` | fix: resolve a11y warnings - valid hrefs and label associations |
+| `ac69a2e` | fix: remove transition from Card components and smooth animations |
+| `510e61e` | fix: resolve Input.svelte stateReferencedLocally warning |
 
 ---
 
@@ -180,4 +215,5 @@ zakatflow/
 ---
 
 **Completed by:** OpenCode AI  
-**Date:** 30 Maret 2026
+**Date:** 30 Maret 2026  
+**Repository:** https://github.com/stayrelevantid/zakatflow.git
