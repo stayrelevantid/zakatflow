@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { calculateZakatFitrah, calculateZakatEmas, calculateZakatPenghasilan, calculateZakatPerdagangan, calculateZakatPertanian, calculateZakatKebun } from '$lib/server/calculations';
+import { calculateZakatFitrah, calculateZakatEmas, calculateZakatPenghasilan, calculateZakatPerdagangan, calculateZakatPertanian, calculateZakatPeternakan } from '$lib/server/calculations';
 
 // POST: Calculate zakat based on category
 export const POST: RequestHandler = async ({ request }) => {
@@ -32,8 +32,8 @@ export const POST: RequestHandler = async ({ request }) => {
 				result = calculateZakatPertanian(inputData);
 				break;
 			
-			case 'Zakat Hasil Kebun/Ikan':
-				result = calculateZakatKebun(inputData);
+			case 'Zakat Peternakan/Perikanan':
+				result = calculateZakatPeternakan(inputData);
 				break;
 			
 			default:

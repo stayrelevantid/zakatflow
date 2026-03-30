@@ -4,7 +4,7 @@ import type {
 	ZakatPenghasilanInput,
 	ZakatPerdaganganInput,
 	ZakatPertanianInput,
-	ZakatKebunInput,
+	ZakatPeternakanInput,
 	ZakatCalculationResult
 } from '../types/zakat';
 
@@ -142,9 +142,9 @@ export function calculateZakatPertanian(input: ZakatPertanianInput): ZakatCalcul
 	};
 }
 
-// ========== ZAKAT HASIL KEBUN/IKAN ==========
+// ========== ZAKAT PETERNAKAN/PERIKAN ==========
 
-export function calculateZakatKebun(input: ZakatKebunInput): ZakatCalculationResult {
+export function calculateZakatPeternakan(input: ZakatPeternakanInput): ZakatCalculationResult {
 	const { pendapatanBersih, hargaEmasPerGram } = input;
 	
 	const nisab = NISAB_EMAS_GRAM * hargaEmasPerGram;
