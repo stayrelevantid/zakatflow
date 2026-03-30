@@ -3,6 +3,7 @@
 	import { fly, fade } from 'svelte/transition';
 
 	let metode = $state<'irigasi' | 'tadah'>('irigasi');
+	const metodeId = 'metode-' + Math.random().toString(36).slice(2, 11);
 </script>
 
 <svelte:head>
@@ -32,19 +33,19 @@
 				<Input label="Harga per Kg (Rp)" type="number" placeholder="Harga hasil panen per kg" min="0" />
 			</div>
 
-			<div>
-				<label class="label mb-3">Metode Pengairan</label>
+			<fieldset>
+				<legend class="label mb-3">Metode Pengairan</legend>
 				<div class="flex gap-4">
-					<label class="flex items-center gap-2 cursor-pointer">
-						<input type="radio" name="metode" class="w-4 h-4 text-primary-500" value="irigasi" bind:group={metode} />
+					<label for="{metodeId}-irigasi" class="flex items-center gap-2 cursor-pointer">
+						<input type="radio" id="{metodeId}-irigasi" name="metode" class="w-4 h-4 text-primary-500" value="irigasi" bind:group={metode} />
 						<span class="text-white">Irigasi (5%)</span>
 					</label>
-					<label class="flex items-center gap-2 cursor-pointer">
-						<input type="radio" name="metode" class="w-4 h-4 text-primary-500" value="tadah" bind:group={metode} />
+					<label for="{metodeId}-tadah" class="flex items-center gap-2 cursor-pointer">
+						<input type="radio" id="{metodeId}-tadah" name="metode" class="w-4 h-4 text-primary-500" value="tadah" bind:group={metode} />
 						<span class="text-white">Tadah Hujan (10%)</span>
 					</label>
 				</div>
-			</div>
+			</fieldset>
 
 			<div class="bg-white/5 rounded-xl p-4 border border-white/10">
 				<h3 class="text-white font-semibold mb-2">Informasi Zakat Pertanian</h3>
