@@ -49,15 +49,17 @@ export async function getAllTransaksi(): Promise<TransaksiZakat[]> {
 
 	const rows = response.data.values || [];
 	
-	return rows.map((row) => ({
-		id: row[0] as string,
-		tanggal: row[1] as string,
-		kategori: row[2] as TransaksiZakat['kategori'],
-		nilaiHarta: parseFloat(row[3]) || 0,
-		zakatWajib: parseFloat(row[4]) || 0,
-		metode: row[5] as string,
-		status: row[6] as TransaksiZakat['status'],
-		catatan: row[7] as string | undefined
+	return rows
+		.filter((row) => row[0] && row[2]) // Filter out rows without id and kategori
+		.map((row) => ({
+			id: row[0] as string,
+			tanggal: row[1] as string,
+			kategori: row[2] as TransaksiZakat['kategori'],
+			nilaiHarta: parseFloat(row[3]) || 0,
+			zakatWajib: parseFloat(row[4]) || 0,
+			metode: row[5] as string,
+			status: row[6] as TransaksiZakat['status'],
+			catatan: row[7] as string | undefined
 	}));
 }
 

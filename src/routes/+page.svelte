@@ -34,13 +34,15 @@
 				throw new Error('Gagal memuat data');
 			}
 			const data = await response.json();
-			transaksi = data;
+			
+			// Filter out invalid entries (must have id and kategori)
+			transaksi = data.filter((t: Transaksi) => t.id && t.kategori);
 			
 			// Calculate stats
-			jumlahTransaksi = data.length;
-			totalZakat = data.reduce((sum: number, t: Transaksi) => sum + t.zakatWajib, 0);
-			sudahBayar = data.filter((t: Transaksi) => t.status === 'Sudah Bayar').reduce((sum: number, t: Transaksi) => sum + t.zakatWajib, 0);
-			belumBayar = data.filter((t: Transaksi) => t.status === 'Belum Bayar').reduce((sum: number, t: Transaksi) => sum + t.zakatWajib, 0);
+			jumlahTransaksi = transaksi.length;
+			totalZakat = transaksi.reduce((sum: number, t: Transaksi) => sum + t.zakatWajib, 0);
+			sudahBayar = transaksi.filter((t: Transaksi) => t.status === 'Sudah Bayar').reduce((sum: number, t: Transaksi) => sum + t.zakatWajib, 0);
+			belumBayar = transaksi.filter((t: Transaksi) => t.status === 'Belum Bayar').reduce((sum: number, t: Transaksi) => sum + t.zakatWajib, 0);
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Gagal memuat data';
 		} finally {
