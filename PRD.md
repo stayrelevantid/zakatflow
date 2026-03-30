@@ -641,15 +641,15 @@ stringData:
 - [x] Implementasi halaman Dashboard (placeholder)
 - [x] Implementasi navigasi antar halaman
 
-### Phase 2 — Kalkulator & Google Sheets Integration
+### Phase 2 — Kalkulator & Google Sheets Integration 🔄 IN PROGRESS
 
 > **Target:** Integrasi Google Sheets API + semua form kalkulator zakat
 
-- [ ] Setup Google Sheets API v4 (Service Account)
-- [ ] Buat utility functions untuk Google Sheets CRUD
+- [x] Setup Google Sheets API v4 (Service Account)
+- [x] Buat utility functions untuk Google Sheets CRUD
 - [ ] Implementasi semua form kalkulator zakat (6 kategori)
-- [ ] Implementasi logika kalkulasi syariah
-- [ ] Implementasi API endpoints (`/api/transaksi`, `/api/kalkulator`, `/api/referensi`)
+- [x] Implementasi logika kalkulasi syariah
+- [x] Implementasi API endpoints (`/api/transaksi`, `/api/kalkulator`, `/api/referensi`)
 - [ ] Simpan hasil kalkulasi ke Google Sheets
 - [ ] Implementasi halaman Riwayat dengan filter & tabel
 - [ ] Implementasi halaman Referensi Harga

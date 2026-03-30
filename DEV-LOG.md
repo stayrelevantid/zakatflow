@@ -75,7 +75,7 @@
 /kalkulator/penghasilan    → Form Zakat Penghasilan
 /kalkulator/perdagangan    → Form Zakat Perdagangan
 /kalkulator/pertanian      → Form Zakat Pertanian
-/kalkulator/kebun         → Form Zakat Hasil Kebun/Ikan
+/kalkulator/kebun          → Form Zakat Hasil Kebun/Ikan
 /riwayat                   → Riwayat Pembayaran
 /referensi                 → Referensi Harga
 ```
@@ -149,7 +149,7 @@ zakatflow/
 │   │   │       └── index.ts
 │   │   ├── utils/
 │   │   │   ├── index.ts           # cn() utility function
-│   │   │   └── animations.ts      # Animation presets
+│   │   │   └── animations.ts       # Animation presets
 │   │   └── assets/
 │   │       └── favicon.svg
 │   └── routes/
@@ -189,28 +189,156 @@ zakatflow/
 | `ca4de62` | fix: resolve a11y warnings - valid hrefs and label associations |
 | `ac69a2e` | fix: remove transition from Card components and smooth animations |
 | `510e61e` | fix: resolve Input.svelte stateReferencedLocally warning |
+| `6613508` | docs: update PRD and DEV-LOG for Phase 1 completion |
 
 ---
 
-### Next Steps (Phase 2)
+## Phase 2: Backend & Google Sheets Integration (30 Maret 2026)
 
-1. [ ] Setup Google Sheets API v4 dengan Service Account
-2. [ ] Buat utility functions untuk Google Sheets CRUD
-3. [ ] Implementasi logika kalkulasi zakat syariah
-4. [ ] Implementasi API endpoints (`/api/transaksi`, `/api/kalkulator`, `/api/referensi`)
-5. [ ] Integrasi form kalkulator dengan backend
-6. [ ] Implementasi halaman riwayat dengan data real
-7. [ ] Implementasi halaman referensi harga dengan CRUD
+### Status: 🔄 In Progress
+
+---
+
+### Tasks Completed
+
+- [x] Setup Google Sheets API v4 dengan Service Account
+- [x] Buat utility functions untuk Google Sheets CRUD
+- [x] Implementasi logika kalkulasi zakat syariah
+- [x] Implementasi API endpoints
+- [x] Setup Svelte stores untuk state management
+- [x] Buat API service functions untuk frontend
+
+### Tasks Remaining
+
+- [ ] Integrasi form kalkulator dengan backend (frontend forms)
+- [ ] Implementasi halaman riwayat dengan data real
+- [ ] Implementasi halaman referensi harga dengan CRUD
+
+---
+
+### Backend Implementation
+
+#### Dependencies Added
+
+```json
+{
+  "dependencies": {
+    "googleapis": "^144.0.0",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/uuid": "^10.0.0"
+  }
+}
+```
+
+#### Environment Configuration
+
+```env
+# .env.example
+SPREADSHEET_ID=your-spreadsheet-id-here
+GOOGLE_CREDENTIALS_BASE64=your-base64-encoded-credentials
+```
+
+#### Types Created
+
+```typescript
+// src/lib/types/zakat.ts
+- ZakatCategory
+- PaymentStatus
+- TransaksiZakat
+- ReferensiHarga
+- ZakatFitrahInput
+- ZakatEmasInput
+- ZakatPenghasilanInput
+- ZakatPerdaganganInput
+- ZakatPertanianInput
+- ZakatKebunInput
+- ZakatCalculationResult
+```
+
+#### Server Utilities
+
+```typescript
+// src/lib/server/sheets.ts
+- getGoogleAuth()
+- getAllTransaksi()
+- getTransaksiById()
+- createTransaksi()
+- updateTransaksi()
+- deleteTransaksi()
+- getAllReferensi()
+- getReferensiByJenis()
+- updateReferensi()
+- initializeSheets()
+
+// src/lib/server/calculations.ts
+- calculateZakatFitrah()
+- calculateZakatEmas()
+- calculateZakatPenghasilan()
+- calculateZakatPerdagangan()
+- calculateZakatPertanian()
+- calculateZakatKebun()
+- getNisabEmas()
+- getNisabPerak()
+- getNisabPertanian()
+```
+
+#### API Endpoints
+
+```
+POST   /api/transaksi      - Create transaksi
+GET    /api/transaksi      - Get all transaksi
+GET    /api/transaksi?id=  - Get transaksi by ID
+PUT    /api/transaksi      - Update transaksi
+DELETE /api/transaksi?id=  - Delete transaksi
+
+POST   /api/kalkulator     - Calculate zakat
+
+GET    /api/referensi      - Get all referensi
+GET    /api/referensi?jenis= - Get referensi by jenis
+PUT    /api/referensi      - Update referensi
+```
+
+#### Frontend Services
+
+```typescript
+// src/lib/stores/zakat.ts
+- transaksiStore
+- referensiStore
+- isLoading
+- errorStore
+
+// src/lib/services/api.ts
+- fetchAllTransaksi()
+- fetchTransaksiById()
+- createTransaksi()
+- updateTransaksi()
+- deleteTransaksi()
+- fetchAllReferensi()
+- fetchReferensiByJenis()
+- updateReferensi()
+- calculateZakat()
+```
+
+---
+
+### Git Commits (Phase 2)
+
+| Commit | Description |
+|--------|-------------|
+| `7b3cf37` | feat: implement Phase 2 - Backend & Google Sheets Integration |
+| `ac3c8de` | feat: add frontend stores and API service functions |
 
 ---
 
 ### Notes
 
-- Semua halaman memiliki placeholder data untuk phase ini
-- Design system konsisten dengan Glassmorphism theme
-- Responsive design untuk desktop dan mobile
-- Navigation berfungsi dengan baik
-- Ready untuk Phase 2: Backend Integration
+- Backend API fully implemented
+- Zakat calculation logic follows syariah rules
+- Google Sheets integration ready for setup
+- Frontend services created for data fetching
 
 ---
 
