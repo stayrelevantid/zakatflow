@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: zakatflow-ingress
+  namespace: zakat-system
+  labels:
+    app.kubernetes.io/name: zakatflow
+    app.kubernetes.io/component: ingress
+  annotations:
+    # Traefik annotations
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.tls: 'false'
+    # Optional: enable rate limiting
+    # traefik.ingress.kubernetes.io/ratelimit.average: "100"
+    # traefik.ingress.kubernetes.io/ratelimit.burst: "200"
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: zakat.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: zakatflow-svc
+                port:
+                  number: 5001

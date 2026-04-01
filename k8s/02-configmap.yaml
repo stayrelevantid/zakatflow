@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zakatflow-config
+  namespace: zakat-system
+  labels:
+    app.kubernetes.io/name: zakatflow
+    app.kubernetes.io/component: config
+data:
+  NODE_ENV: 'production'
+  PORT: '3000'
+  HOST: '0.0.0.0'
+  # SPREADSHEET_ID will be set via secret or environment

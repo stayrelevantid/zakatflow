@@ -21,7 +21,7 @@ export interface ReferensiHarga {
 // Transaksi Store
 function createTransaksiStore() {
 	const { subscribe, set, update } = writable<TransaksiZakat[]>([]);
-	
+
 	return {
 		subscribe,
 		set,
@@ -38,7 +38,7 @@ export const transaksiStore = createTransaksiStore();
 // Referensi Store
 function createReferensiStore() {
 	const { subscribe, set, update } = writable<ReferensiHarga[]>([]);
-	
+
 	return {
 		subscribe,
 		set,
@@ -46,7 +46,11 @@ function createReferensiStore() {
 			update((list) =>
 				list.map((r) =>
 					r.jenis.toLowerCase() === jenis.toLowerCase()
-						? { ...r, hargaPerUnit: hargaBaru, terakhirUpdate: new Date().toISOString().split('T')[0] }
+						? {
+								...r,
+								hargaPerUnit: hargaBaru,
+								terakhirUpdate: new Date().toISOString().split('T')[0]
+							}
 						: r
 				)
 			),
@@ -61,3 +65,6 @@ export const isLoading = writable(false);
 
 // Error State
 export const errorStore = writable<string | null>(null);
+
+// Sidebar State
+export const sidebarOpen = writable(true);

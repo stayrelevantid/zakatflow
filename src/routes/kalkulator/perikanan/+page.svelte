@@ -3,6 +3,7 @@
 	import { fly, fade } from 'svelte/transition';
 	import { isLoading } from '$lib/stores/zakat';
 	import { createTransaksi } from '$lib/services/api';
+	import { goto } from '$app/navigation';
 
 	let pendapatanBersih = $state<number>(0);
 	let hargaEmas = $state<number>(1100000);
@@ -12,12 +13,12 @@
 
 	function calculate() {
 		error = null;
-		
+
 		if (pendapatanBersih <= 0) {
 			error = 'Pendapatan bersih harus lebih dari 0';
 			return;
 		}
-		
+
 		if (hargaEmas <= 0) {
 			error = 'Harga emas harus lebih dari 0';
 			return;
@@ -27,7 +28,7 @@
 		const nisab = 85 * hargaEmas;
 		const wajibZakat = pendapatanBersih >= nisab;
 		const zakatWajib = wajibZakat ? pendapatanBersih * 0.025 : 0;
-		
+
 		result = { nisab, wajibZakat, zakatWajib };
 	}
 
@@ -48,6 +49,10 @@
 			});
 			success = 'Transaksi berhasil disimpan!';
 			error = null;
+			// Redirect ke dashboard setelah 1 detik
+			setTimeout(() => {
+				goto('/');
+			}, 1000);
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Terjadi kesalahan saat menyimpan';
 		}
@@ -75,7 +80,10 @@
 </svelte:head>
 
 <div class="max-w-2xl mx-auto" transition:fade={{ duration: 400 }}>
-	<a href="/kalkulator" class="inline-flex items-center gap-2 text-white/60 hover:text-white mb-6 transition-colors">
+	<a
+		href="/kalkulator"
+		class="inline-flex items-center gap-2 text-white/60 hover:text-white mb-6 transition-colors"
+	>
 		<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
 		</svg>
@@ -91,12 +99,24 @@
 		<Card class="p-8">
 			<form class="space-y-6">
 				<div>
-					<Input label="Pendapatan Bersih (Rp)" type="number" placeholder="Pendapatan bersih dari usaha perikanan" bind:value={pendapatanBersih} min="0" />
+					<Input
+						label="Pendapatan Bersih (Rp)"
+						type="number"
+						placeholder="Pendapatan bersih dari usaha perikanan"
+						bind:value={pendapatanBersih}
+						min="0"
+					/>
 					<p class="text-white/40 text-xs mt-1">Pendapatan setelah dikurangi biaya operasional</p>
 				</div>
 
 				<div>
-					<Input label="Harga Emas per Gram (Rp)" type="number" placeholder="Harga emas saat ini" bind:value={hargaEmas} min="1" />
+					<Input
+						label="Harga Emas per Gram (Rp)"
+						type="number"
+						placeholder="Harga emas saat ini"
+						bind:value={hargaEmas}
+						min="1"
+					/>
 					<p class="text-white/40 text-xs mt-1">Default: Rp 1.100.000</p>
 				</div>
 
@@ -117,7 +137,7 @@
 						<div class="mt-2 text-white/40 text-xs space-y-1">
 							<p>Pendapatan bersih: {formatCurrency(pendapatanBersih)}</p>
 							<p>Nisab: {formatCurrency(result.nisab)}</p>
-							<p class="{result.wajibZakat ? 'text-green-400' : 'text-yellow-400'}">
+							<p class={result.wajibZakat ? 'text-green-400' : 'text-yellow-400'}>
 								{result.wajibZakat ? '✓ Wajib zakat' : '✗ Belum mencapai nisab'}
 							</p>
 						</div>
@@ -146,7 +166,13 @@
 
 				{#if result}
 					<div class="flex gap-4">
-						<Button type="button" onclick={handleSave} loading={$isLoading} disabled={!result.wajibZakat} class="flex-1">
+						<Button
+							type="button"
+							onclick={handleSave}
+							loading={$isLoading}
+							disabled={!result.wajibZakat}
+							class="flex-1"
+						>
 							{result.wajibZakat ? 'Simpan Transaksi' : 'Tidak Wajib Zakat'}
 						</Button>
 						<Button variant="outline" type="button" onclick={resetForm}>Reset</Button>

@@ -3,6 +3,7 @@
 	import { fly, fade } from 'svelte/transition';
 	import { isLoading } from '$lib/stores/zakat';
 	import { createTransaksi } from '$lib/services/api';
+	import { goto } from '$app/navigation';
 
 	let jumlahJiwa = $state<number>(0);
 	let hargaBeras = $state<number>(15000);
@@ -12,12 +13,12 @@
 
 	function calculate() {
 		error = null;
-		
+
 		if (jumlahJiwa <= 0) {
 			error = 'Jumlah jiwa harus lebih dari 0';
 			return;
 		}
-		
+
 		if (hargaBeras <= 0) {
 			error = 'Harga beras harus lebih dari 0';
 			return;
@@ -25,7 +26,7 @@
 
 		const jumlahBeras = jumlahJiwa * 2.5; // 2.5 kg per jiwa
 		const zakatWajib = jumlahBeras * hargaBeras;
-		
+
 		result = { zakatWajib, jumlahBeras };
 	}
 
@@ -46,6 +47,10 @@
 			});
 			success = 'Transaksi berhasil disimpan!';
 			error = null;
+			// Redirect ke dashboard setelah 1 detik
+			setTimeout(() => {
+				goto('/');
+			}, 1000);
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Terjadi kesalahan saat menyimpan';
 		}
@@ -73,7 +78,10 @@
 </svelte:head>
 
 <div class="max-w-2xl mx-auto" transition:fade={{ duration: 400 }}>
-	<a href="/kalkulator" class="inline-flex items-center gap-2 text-white/60 hover:text-white mb-6 transition-colors">
+	<a
+		href="/kalkulator"
+		class="inline-flex items-center gap-2 text-white/60 hover:text-white mb-6 transition-colors"
+	>
 		<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
 		</svg>
@@ -89,12 +97,24 @@
 		<Card class="p-8">
 			<form class="space-y-6">
 				<div>
-					<Input label="Jumlah Jiwa" type="number" placeholder="Masukkan jumlah jiwa" bind:value={jumlahJiwa} min="1" />
+					<Input
+						label="Jumlah Jiwa"
+						type="number"
+						placeholder="Masukkan jumlah jiwa"
+						bind:value={jumlahJiwa}
+						min="1"
+					/>
 					<p class="text-white/40 text-xs mt-1">Jumlah anggota keluarga yang wajib zakat fitrah</p>
 				</div>
 
 				<div>
-					<Input label="Harga Beras per Kg (Rp)" type="number" placeholder="Masukkan harga beras" bind:value={hargaBeras} min="1" />
+					<Input
+						label="Harga Beras per Kg (Rp)"
+						type="number"
+						placeholder="Masukkan harga beras"
+						bind:value={hargaBeras}
+						min="1"
+					/>
 					<p class="text-white/40 text-xs mt-1">Harga beras di daerah Anda</p>
 				</div>
 
@@ -137,7 +157,9 @@
 
 				{#if result}
 					<div class="flex gap-4">
-						<Button type="button" onclick={handleSave} loading={$isLoading} class="flex-1">Simpan Transaksi</Button>
+						<Button type="button" onclick={handleSave} loading={$isLoading} class="flex-1"
+							>Simpan Transaksi</Button
+						>
 						<Button variant="outline" type="button" onclick={resetForm}>Reset</Button>
 					</div>
 				{/if}

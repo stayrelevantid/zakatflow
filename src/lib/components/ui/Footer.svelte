@@ -12,9 +12,10 @@
 			<span>Sesuai Syariah • Mudah • Aman</span>
 		</div>
 		<div class="flex items-center gap-4">
-			<button type="button" class="text-white/50 hover:text-white text-sm transition-colors">Tentang</button>
-			<button type="button" class="text-white/50 hover:text-white text-sm transition-colors">Bantuan</button>
-			<button type="button" class="text-white/50 hover:text-white text-sm transition-colors">Kontak</button>
+			<a href="/tentang" class="text-white/50 hover:text-white text-sm transition-colors">Tentang</a
+			>
+			<a href="/bantuan" class="text-white/50 hover:text-white text-sm transition-colors">Bantuan</a
+			>
 		</div>
 	</div>
 </footer>

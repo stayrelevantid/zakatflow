@@ -1,8 +1,20 @@
 # Product Requirement Document (PRD): ZakatFlow
 
-> **Versi Dokumen:** 1.0.0  
-> **Tanggal:** 30 Maret 2026  
-> **Status:** Draft
+> **Versi Dokumen:** 2.0.0  
+> **Tanggal:** 1 April 2026  
+> **Status:** ✅ **PRODUCTION READY - ALL PHASES COMPLETED**
+
+---
+
+## 🎉 Project Summary
+
+ZakatFlow telah berhasil di-deploy ke Kubernetes (k3d) dengan fitur lengkap:
+
+- ✅ 7 Kalkulator Zakat sesuai syariah
+- ✅ Google Sheets integration
+- ✅ Kubernetes deployment dengan auto-scaling
+- ✅ Production-ready dengan health checks
+- ✅ Glassmorphism UI yang responsif
 
 ---
 
@@ -185,12 +197,12 @@ if (pendapatan_bersih >= nisab) {
 | Kategori          | Nisab (Ambang Batas)      | Kadar Zakat  | Input yang Dibutuhkan                         |
 | ----------------- | ------------------------- | ------------ | --------------------------------------------- |
 | Zakat Fitrah      | Per jiwa                  | 2,5 kg beras | Jumlah orang/jiwa                             |
-| Zakat Emas/Perak  | 85g (Emas) / 595g (Perak) | 2,5% | Gram murni                                    |
-| Zakat Penghasilan | Setara 85g emas/tahun | 2,5% | Gaji bulanan/tahunan                          |
-| Zakat Perdagangan | Setara 85g emas | 2,5% | Modal + Kas + Piutang - Hutang                |
-| Zakat Pertanian   | 653 kg gabah | 5% / 10% | Hasil panen (kg) + toggle irigasi/tadah hujan |
-| Zakat Peternakan | Setara 85g emas | 2,5% | Jenis hewan, jumlah, nilai per hewan |
-| Zakat Perikanan | Setara 85g emas | 2,5% | Pendapatan bersih |
+| Zakat Emas/Perak  | 85g (Emas) / 595g (Perak) | 2,5%         | Gram murni                                    |
+| Zakat Penghasilan | Setara 85g emas/tahun     | 2,5%         | Gaji bulanan/tahunan                          |
+| Zakat Perdagangan | Setara 85g emas           | 2,5%         | Modal + Kas + Piutang - Hutang                |
+| Zakat Pertanian   | 653 kg gabah              | 5% / 10%     | Hasil panen (kg) + toggle irigasi/tadah hujan |
+| Zakat Peternakan  | Setara 85g emas           | 2,5%         | Jenis hewan, jumlah, nilai per hewan          |
+| Zakat Perikanan   | Setara 85g emas           | 2,5%         | Pendapatan bersih                             |
 
 ### 3.3 Manajemen Data (Google Sheets)
 
@@ -271,11 +283,11 @@ spec:
             - containerPort: 3000
           resources:
             requests:
-              cpu: "100m"
-              memory: "128Mi"
+              cpu: '100m'
+              memory: '128Mi'
             limits:
-              cpu: "250m"
-              memory: "256Mi"
+              cpu: '250m'
+              memory: '256Mi'
           envFrom:
             - configMapRef:
                 name: zakatflow-config
@@ -332,7 +344,7 @@ metadata:
   name: zakatflow-config
   namespace: zakat-system
 data:
-  SPREADSHEET_ID: "<your-spreadsheet-id>"
+  SPREADSHEET_ID: '<your-spreadsheet-id>'
 
 ---
 # Secret
@@ -343,7 +355,7 @@ metadata:
   namespace: zakat-system
 type: Opaque
 stringData:
-  GOOGLE_AUTH_CREDENTIALS: "<base64-encoded-service-account-json>"
+  GOOGLE_AUTH_CREDENTIALS: '<base64-encoded-service-account-json>'
 ```
 
 ### 4.3 Diagram Arsitektur
@@ -420,51 +432,47 @@ stringData:
 ```css
 /* Background utama */
 .app-background {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-  min-height: 100vh;
-  position: relative;
-  overflow: hidden;
+	background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+	min-height: 100vh;
+	position: relative;
+	overflow: hidden;
 }
 
 /* Radial glow effect */
 .app-background::before {
-  content: "";
-  position: absolute;
-  top: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(
-    circle,
-    rgba(16, 185, 129, 0.15) 0%,
-    transparent 70%
-  );
-  border-radius: 50%;
+	content: '';
+	position: absolute;
+	top: 20%;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 600px;
+	height: 600px;
+	background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+	border-radius: 50%;
 }
 
 /* Glass card */
 .glass-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  border-radius: 1rem;
+	background: rgba(255, 255, 255, 0.1);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+	border-radius: 1rem;
 }
 
 /* Input dengan neon glow */
 .glass-input {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: white;
-  transition: all 0.3s ease;
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	color: white;
+	transition: all 0.3s ease;
 }
 
 .glass-input:focus {
-  border-color: #10b981;
-  box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
-  outline: none;
+	border-color: #10b981;
+	box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+	outline: none;
 }
 ```
 
@@ -514,14 +522,16 @@ stringData:
 /                     → Landing / Dashboard
 /kalkulator           → Kalkulator Zakat (Pilih Kategori)
 /kalkulator/fitrah    → Form Zakat Fitrah
-/kalkulator/emas      → Form Zakat Emas/Perak
+/kalkulator/emas      → Form Zakat Emas/Perak (dengan pilihan jenis)
 /kalkulator/penghasilan → Form Zakat Penghasilan
 /kalkulator/perdagangan → Form Zakat Perdagangan
 /kalkulator/pertanian → Form Zakat Pertanian
-/kalkulator/peternakan   → Form Zakat Peternakan
+/kalkulator/peternakan   → Form Zakat Peternakan (Sapi/Kambing/Unta)
 /kalkulator/perikanan     → Form Zakat Perikanan
-/riwayat              → Riwayat Pembayaran Zakat
+/riwayat              → Riwayat Pembayaran Zakat (dengan filter & search)
 /referensi            → Tabel Referensi Harga (Emas, Beras, dll)
+/tentang              → Halaman Tentang (Visi Misi, Dasar Hukum, Developer)
+/bantuan              → Halaman Bantuan (FAQ, Panduan, Tips)
 ```
 
 ### 7.2 Deskripsi Halaman
@@ -640,7 +650,7 @@ stringData:
 - [x] Setup Shadcn UI untuk Svelte
 - [x] Implementasi design system Glassmorphism (background, glass cards, inputs)
 - [x] Setup layout utama (navbar, sidebar/nav, footer)
-- [x] Implementasi halaman Dashboard (placeholder)
+- [x] Implementasi halaman Dashboard dengan statistik real-time
 - [x] Implementasi navigasi antar halaman
 
 ### Phase 2 — Kalkulator & Google Sheets Integration ✅ COMPLETED
@@ -649,42 +659,65 @@ stringData:
 
 - [x] Setup Google Sheets API v4 (Service Account)
 - [x] Buat utility functions untuk Google Sheets CRUD
-- [x] Implementasi semua form kalkulator zakat (6 kategori)
-- [x] Implementasi logika kalkulasi syariah
+- [x] Implementasi semua form kalkulator zakat (7 kategori):
+  - [x] Zakat Fitrah
+  - [x] Zakat Emas & Perak (dengan pemilihan jenis)
+  - [x] Zakat Penghasilan
+  - [x] Zakat Perdagangan
+  - [x] Zakat Pertanian
+  - [x] Zakat Peternakan (Sapi, Kambing, Unta)
+  - [x] Zakat Perikanan
+- [x] Implementasi logika kalkulasi syariah sesuai nisab dan kadar
 - [x] Implementasi API endpoints (`/api/transaksi`, `/api/kalkulator`, `/api/referensi`)
 - [x] Simpan hasil kalkulasi ke Google Sheets
-- [x] Implementasi halaman Riwayat dengan filter & tabel
-- [x] Implementasi halaman Referensi Harga
+- [x] Redirect ke dashboard setelah simpan transaksi
+- [x] Implementasi halaman Riwayat dengan:
+  - [x] Filter kategori & status
+  - [x] Pencarian transaksi (search)
+  - [x] Toggle status pembayaran (Sudah/Belum Bayar)
+  - [x] Hapus transaksi
+  - [x] Sorting by tanggal terbaru
+  - [x] Detail transaksi (metode & catatan)
+- [x] Implementasi halaman Referensi Harga dengan CRUD
+- [x] Implementasi halaman Tentang & Bantuan
+- [x] Fitur Maintenance untuk perbaikan data (cleanup duplikat)
 
-### Phase 3 — Dockerization & Kubernetes Manifests
+### Phase 3 — Dockerization & Kubernetes Manifests ✅ COMPLETED
 
 > **Target:** Containerize aplikasi & siapkan manifests Kubernetes
 
-- [ ] Buat Dockerfile (multi-stage build)
-- [ ] Buat `.dockerignore`
-- [ ] Build & test Docker image secara lokal
-- [ ] Buat Kubernetes manifests:
-  - [ ] Namespace (`zakat-system`)
-  - [ ] Deployment (1-2 replika)
-  - [ ] Service (ClusterIP)
-  - [ ] Ingress (Traefik → `zakat.local`)
-  - [ ] ConfigMap & Secret
-- [ ] Validasi manifests dengan `kubectl apply --dry-run`
+- [x] Buat Dockerfile (multi-stage build dengan 3 stages)
+- [x] Buat `.dockerignore`
+- [x] Build & test Docker image secara lokal
+- [x] Image optimization (~150-200MB)
+- [x] Security: Non-root user (UID 1001)
+- [x] Health check endpoint (`/api/health`)
 
-### Phase 4 — Deployment & Testing
+#### Kubernetes Manifests
+
+- [x] Namespace (`zakat-system`)
+- [x] Deployment (2 replicas dengan rolling update)
+- [x] Service (ClusterIP)
+- [x] Ingress (Traefik → `zakat.local`)
+- [x] ConfigMap & Secret untuk environment variables
+- [x] HPA (Horizontal Pod Autoscaler 2-5 pods)
+- [x] Validasi manifests dengan `kubectl apply --dry-run`
+
+### Phase 4 — Deployment & Testing ✅ COMPLETED
 
 > **Target:** Deploy ke k3d dan pengujian end-to-end
 
-- [ ] Buat cluster k3d baru
-- [ ] Import Docker image ke k3d
-- [ ] Deploy semua manifests ke cluster
-- [ ] Konfigurasi `/etc/hosts` untuk `zakat.local`
-- [ ] Testing end-to-end:
-  - [ ] Akses `zakat.local` via browser
-  - [ ] Test semua kalkulator zakat
-  - [ ] Test CRUD transaksi ke Google Sheets
-  - [ ] Test responsivitas UI
-- [ ] Monitoring & troubleshooting
+- [x] Buat cluster k3d baru dengan Traefik
+- [x] Import Docker image ke k3d
+- [x] Deploy semua manifests ke cluster
+- [x] Konfigurasi `/etc/hosts` untuk `zakat.local`
+- [x] Testing end-to-end:
+  - [x] Akses `zakat.local` via browser
+  - [x] Test semua kalkulator zakat (7 kategori)
+  - [x] Test CRUD transaksi ke Google Sheets
+  - [x] Test responsivitas UI
+- [x] Deployment automation script (`deploy.sh`)
+- [x] Comprehensive deployment documentation (`DEPLOYMENT.md`)
 
 ---
 
@@ -692,20 +725,27 @@ stringData:
 
 ### Fungsional
 
-- [ ] Semua 6 kategori kalkulator zakat berfungsi dengan kalkulasi yang benar sesuai syariah
-- [ ] Data transaksi tersimpan dan terbaca dari Google Sheets secara real-time
-- [ ] Filter riwayat berdasarkan kategori dan status berfungsi
-- [ ] Referensi harga bisa di-update dan digunakan dalam kalkulasi
-- [ ] Validasi input mencegah data tidak valid masuk ke sistem
+- [x] Semua 7 kategori kalkulator zakat berfungsi dengan kalkulasi yang benar sesuai syariah
+- [x] Data transaksi tersimpan dan terbaca dari Google Sheets secara real-time
+- [x] Filter riwayat berdasarkan kategori, status, dan pencarian berfungsi
+- [x] Toggle status pembayaran dan delete transaksi berfungsi
+- [x] Referensi harga bisa di-update dan digunakan dalam kalkulasi
+- [x] Validasi input mencegah data tidak valid masuk ke sistem
+- [x] Redirect ke dashboard setelah simpan transaksi
+- [x] Fitur maintenance untuk cleanup data duplikat
+- [x] Health check endpoint (`/api/health`) tersedia
 
 ### Non-Fungsional
 
-- [ ] UI menggunakan tema Glassmorphism yang konsisten di semua halaman
-- [ ] Animasi transisi Svelte berjalan smooth (fade, fly, slide)
-- [ ] Aplikasi responsive di desktop dan mobile
-- [ ] Docker image berukuran < 200MB
-- [ ] Pods berjalan stabil di k3d tanpa crash loop
-- [ ] Akses via `zakat.local` berjalan lancar melalui Traefik Ingress
+- [x] UI menggunakan tema Glassmorphism yang konsisten di semua halaman
+- [x] Animasi transisi Svelte berjalan smooth (fade, fly, slide)
+- [x] Aplikasi responsive di desktop dan mobile
+- [x] Docker image berukuran < 200MB (optimized multi-stage)
+- [x] Pods berjalan stabil di k3d tanpa crash loop
+- [x] Akses via `zakat.local` berjalan lancar melalui Traefik Ingress
+- [x] Auto-scaling dengan HPA (2-5 pods)
+- [x] High availability dengan 2+ replicas
+- [x] Security: Non-root user, secrets management
 
 ---
 

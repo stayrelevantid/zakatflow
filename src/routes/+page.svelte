@@ -27,22 +27,26 @@
 	async function loadData() {
 		loading = true;
 		error = null;
-		
+
 		try {
 			const response = await fetch('/api/transaksi');
 			if (!response.ok) {
 				throw new Error('Gagal memuat data');
 			}
 			const data = await response.json();
-			
+
 			// Filter out invalid entries (must have id and kategori)
 			transaksi = data.filter((t: Transaksi) => t.id && t.kategori);
-			
+
 			// Calculate stats
 			jumlahTransaksi = transaksi.length;
 			totalZakat = transaksi.reduce((sum: number, t: Transaksi) => sum + t.zakatWajib, 0);
-			sudahBayar = transaksi.filter((t: Transaksi) => t.status === 'Sudah Bayar').reduce((sum: number, t: Transaksi) => sum + t.zakatWajib, 0);
-			belumBayar = transaksi.filter((t: Transaksi) => t.status === 'Belum Bayar').reduce((sum: number, t: Transaksi) => sum + t.zakatWajib, 0);
+			sudahBayar = transaksi
+				.filter((t: Transaksi) => t.status === 'Sudah Bayar')
+				.reduce((sum: number, t: Transaksi) => sum + t.zakatWajib, 0);
+			belumBayar = transaksi
+				.filter((t: Transaksi) => t.status === 'Belum Bayar')
+				.reduce((sum: number, t: Transaksi) => sum + t.zakatWajib, 0);
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Gagal memuat data';
 		} finally {
@@ -71,7 +75,9 @@
 	}
 
 	function getStatusColor(status: string): string {
-		return status === 'Sudah Bayar' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400';
+		return status === 'Sudah Bayar'
+			? 'bg-green-500/20 text-green-400'
+			: 'bg-yellow-500/20 text-yellow-400';
 	}
 
 	function getCategoryIcon(kategori: string): string {
@@ -87,6 +93,11 @@
 		};
 		return icons[kategori] || '📋';
 	}
+
+	// Derived state untuk transaksi yang sudah diurutkan (tanpa mutasi array asli)
+	let sortedTransaksi = $derived(
+		[...transaksi].sort((a, b) => new Date(b.tanggal).getTime() - new Date(a.tanggal).getTime())
+	);
 </script>
 
 <svelte:head>
@@ -95,7 +106,10 @@
 
 <div class="max-w-7xl mx-auto" transition:fade={{ duration: 400 }}>
 	<div class="mb-8">
-		<h1 class="text-4xl font-display font-bold text-white mb-2" transition:fly={{ y: -20, duration: 600 }}>
+		<h1
+			class="text-4xl font-display font-bold text-white mb-2"
+			transition:fly={{ y: -20, duration: 600 }}
+		>
 			🕌 Dashboard Zakat
 		</h1>
 		<p class="text-white/60 text-lg">Kelola dan pantau pembayaran zakat Anda</p>
@@ -112,12 +126,7 @@
 		</div>
 	{:else}
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-			{#each [
-				{ title: 'Total Zakat', value: formatCurrency(totalZakat), icon: '💰', color: 'primary' },
-				{ title: 'Sudah Bayar', value: formatCurrency(sudahBayar), icon: '✅', color: 'green' },
-				{ title: 'Belum Bayar', value: formatCurrency(belumBayar), icon: '⏳', color: 'yellow' },
-				{ title: 'Transaksi', value: jumlahTransaksi.toString(), icon: '📋', color: 'blue' }
-			] as stat, i}
+			{#each [{ title: 'Total Zakat', value: formatCurrency(totalZakat), icon: '💰', color: 'primary' }, { title: 'Sudah Bayar', value: formatCurrency(sudahBayar), icon: '✅', color: 'green' }, { title: 'Belum Bayar', value: formatCurrency(belumBayar), icon: '⏳', color: 'yellow' }, { title: 'Transaksi', value: jumlahTransaksi.toString(), icon: '📋', color: 'blue' }] as stat, i}
 				<div transition:fly={{ y: 30, delay: i * 80, duration: 500 }}>
 					<Card class="p-6">
 						<div class="flex items-center justify-between mb-2">
@@ -133,17 +142,21 @@
 		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 			<div class="lg:col-span-2" transition:fly={{ y: 20, delay: 400, duration: 500 }}>
 				<Card class="p-6">
-					<h2 class="text-xl font-display font-semibold text-white mb-4">📊 Ringkasan per Kategori</h2>
+					<h2 class="text-xl font-display font-semibold text-white mb-4">
+						📊 Ringkasan per Kategori
+					</h2>
 					{#if transaksi.length === 0}
-						<div class="h-64 flex items-center justify-center border border-dashed border-white/20 rounded-xl">
+						<div
+							class="h-64 flex items-center justify-center border border-dashed border-white/20 rounded-xl"
+						>
 							<p class="text-white/40">Belum ada transaksi</p>
 						</div>
 					{:else}
 						<div class="space-y-3">
-							{#each Object.entries(transaksi.reduce((acc, t) => {
-								acc[t.kategori] = (acc[t.kategori] || 0) + t.zakatWajib;
-								return acc;
-							}, {} as Record<string, number>)).sort((a, b) => b[1] - a[1]) as [string, number]}
+							{#each Object.entries(transaksi.reduce((acc: Record<string, number>, t) => {
+									acc[t.kategori] = (acc[t.kategori] || 0) + t.zakatWajib;
+									return acc;
+								}, {})).sort((a, b) => b[1] - a[1]) as [kategori, zakatWajib]}
 								<div class="flex items-center justify-between p-3 bg-white/5 rounded-lg">
 									<div class="flex items-center gap-3">
 										<span class="text-xl">{getCategoryIcon(kategori)}</span>
@@ -185,7 +198,9 @@
 			<Card class="p-6">
 				<h2 class="text-xl font-display font-semibold text-white mb-4">📜 Transaksi Terakhir</h2>
 				{#if transaksi.length === 0}
-					<div class="h-48 flex items-center justify-center border border-dashed border-white/20 rounded-xl">
+					<div
+						class="h-48 flex items-center justify-center border border-dashed border-white/20 rounded-xl"
+					>
 						<p class="text-white/40">Belum ada transaksi</p>
 					</div>
 				{:else}
@@ -201,7 +216,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								{#each transaksi.slice(0, 5) as t}
+								{#each sortedTransaksi.slice(0, 5) as t}
 									<tr class="text-white border-b border-white/5 hover:bg-white/5">
 										<td class="py-3 px-2 text-sm">{formatDate(t.tanggal)}</td>
 										<td class="py-3 px-2">
@@ -211,18 +226,27 @@
 											</div>
 										</td>
 										<td class="py-3 px-2 text-right text-sm">{formatCurrency(t.nilaiHarta)}</td>
-										<td class="py-3 px-2 text-right text-sm font-semibold text-primary-400">{formatCurrency(t.zakatWajib)}</td>
+										<td class="py-3 px-2 text-right text-sm font-semibold text-primary-400"
+											>{formatCurrency(t.zakatWajib)}</td
+										>
 										<td class="py-3 px-2 text-center">
 											<span class="px-2 py-1 rounded-full text-xs {getStatusColor(t.status)}">
 												{t.status}
 											</span>
 										</td>
 									</tr>
+									{#if t.metode}
+										<tr class="border-b border-white/5 bg-white/[0.02]">
+											<td colspan="5" class="py-2 px-2 text-xs text-white/60">
+												{t.metode}
+											</td>
+										</tr>
+									{/if}
 								{/each}
 							</tbody>
 						</table>
 					</div>
-					{#if transaksi.length > 5}
+					{#if sortedTransaksi.length > 5}
 						<div class="mt-4 text-center">
 							<a href="/riwayat" class="text-primary-400 hover:text-primary-300 text-sm">
 								Lihat semua transaksi →

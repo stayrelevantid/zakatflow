@@ -1,6 +1,12 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { getAllTransaksi, createTransaksi, getTransaksiById, updateTransaksi, deleteTransaksi } from '$lib/server/sheets';
+import {
+	getAllTransaksi,
+	createTransaksi,
+	getTransaksiById,
+	updateTransaksi,
+	deleteTransaksi
+} from '$lib/server/sheets';
 import type { TransaksiZakat } from '$lib/types/zakat';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -8,7 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 export const GET: RequestHandler = async ({ url }) => {
 	try {
 		const id = url.searchParams.get('id');
-		
+
 		if (id) {
 			const transaksi = await getTransaksiById(id);
 			if (!transaksi) {
@@ -16,7 +22,7 @@ export const GET: RequestHandler = async ({ url }) => {
 			}
 			return json(transaksi);
 		}
-		
+
 		const transaksiList = await getAllTransaksi();
 		return json(transaksiList);
 	} catch (error) {
@@ -29,7 +35,7 @@ export const GET: RequestHandler = async ({ url }) => {
 export const POST: RequestHandler = async ({ request }) => {
 	try {
 		const data = await request.json();
-		
+
 		const transaksiData: Omit<TransaksiZakat, 'id' | 'tanggal'> = {
 			kategori: data.kategori,
 			nilaiHarta: data.nilaiHarta,
@@ -38,9 +44,9 @@ export const POST: RequestHandler = async ({ request }) => {
 			status: data.status || 'Belum Bayar',
 			catatan: data.catatan
 		};
-		
+
 		const newTransaksi = await createTransaksi(transaksiData);
-		
+
 		return json({ success: true, data: newTransaksi }, { status: 201 });
 	} catch (error) {
 		console.error('Error creating transaksi:', error);
@@ -53,17 +59,18 @@ export const PUT: RequestHandler = async ({ request }) => {
 	try {
 		const data = await request.json();
 		const { id, ...updates } = data;
-		
+
 		if (!id) {
 			return json({ error: 'ID transaksi diperlukan' }, { status: 400 });
 		}
-		
+
+		console.log('PUT request received with ID:', id);
 		const updated = await updateTransaksi(id, updates);
-		
+
 		if (!updated) {
-			return json({ error: 'Transaksi tidak ditemukan' }, { status: 404 });
+			return json({ error: `Transaksi dengan ID "${id}" tidak ditemukan` }, { status: 404 });
 		}
-		
+
 		return json({ success: true, message: 'Transaksi berhasil diperbarui' });
 	} catch (error) {
 		console.error('Error updating transaksi:', error);
@@ -75,17 +82,17 @@ export const PUT: RequestHandler = async ({ request }) => {
 export const DELETE: RequestHandler = async ({ url }) => {
 	try {
 		const id = url.searchParams.get('id');
-		
+
 		if (!id) {
 			return json({ error: 'ID transaksi diperlukan' }, { status: 400 });
 		}
-		
+
 		const deleted = await deleteTransaksi(id);
-		
+
 		if (!deleted) {
 			return json({ error: 'Transaksi tidak ditemukan' }, { status: 404 });
 		}
-		
+
 		return json({ success: true, message: 'Transaksi berhasil dihapus' });
 	} catch (error) {
 		console.error('Error deleting transaksi:', error);

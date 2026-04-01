@@ -3,12 +3,13 @@
 	import { fly, fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
 	import { transaksiStore, isLoading } from '$lib/stores/zakat';
-	import { fetchAllTransaksi, deleteTransaksi } from '$lib/services/api';
+	import { fetchAllTransaksi, deleteTransaksi, updateTransaksi } from '$lib/services/api';
 	import type { TransaksiZakat } from '$lib/types/zakat';
 
 	let transaksiList: TransaksiZakat[] = $state([]);
 	let filterKategori = $state('');
 	let filterStatus = $state('');
+	let searchQuery = $state('');
 	let error = $state<string | null>(null);
 
 	onMount(async () => {
@@ -25,14 +26,94 @@
 		}
 	}
 
+	let maintenanceStatus: {
+		success: boolean;
+		needsCleanup?: boolean;
+		analysis?: any;
+		message?: string;
+	} | null = $state(null);
+	let cleaning = $state(false);
+
+	async function checkDataStatus() {
+		try {
+			const response = await fetch('/api/maintenance');
+			maintenanceStatus = await response.json();
+		} catch (e) {
+			error = 'Gagal memeriksa status data';
+		}
+	}
+
+	async function cleanupData() {
+		if (
+			!confirm('PERINGATAN: Tindakan ini akan menghapus data duplikat dan baris kosong. Lanjutkan?')
+		)
+			return;
+
+		cleaning = true;
+		try {
+			const response = await fetch('/api/maintenance', { method: 'POST' });
+			maintenanceStatus = await response.json();
+			if (maintenanceStatus && maintenanceStatus.success) {
+				await loadTransaksi();
+			}
+		} catch (e) {
+			error = 'Gagal membersihkan data';
+		} finally {
+			cleaning = false;
+		}
+	}
+
+	async function resetData() {
+		const firstConfirm = confirm(
+			'PERINGATAN: Semua data akan dihapus dan diganti dengan 15 transaksi contoh. Lanjutkan?'
+		);
+		if (!firstConfirm) return;
+
+		const secondConfirm = prompt('Ketik "RESET" untuk mengkonfirmasi:');
+		if (secondConfirm?.toUpperCase() !== 'RESET') return;
+
+		cleaning = true;
+		try {
+			const response = await fetch('/api/maintenance/reset', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ confirm: 'RESET_ALL_DATA' })
+			});
+			const result = await response.json();
+			if (result.success) {
+				maintenanceStatus = { success: true, message: result.message };
+				await loadTransaksi();
+			} else {
+				error = result.error || 'Gagal mereset data';
+			}
+		} catch (e) {
+			error = 'Gagal mereset data';
+		} finally {
+			cleaning = false;
+		}
+	}
+
 	async function handleDelete(id: string) {
 		if (!confirm('Apakah Anda yakin ingin menghapus transaksi ini?')) return;
 
 		try {
 			await deleteTransaksi(id);
-			transaksiList = transaksiList.filter(t => t.id !== id);
+			transaksiList = transaksiList.filter((t) => t.id !== id);
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Terjadi kesalahan saat menghapus';
+		}
+	}
+
+	async function handleToggleStatus(transaksi: TransaksiZakat) {
+		const newStatus = transaksi.status === 'Sudah Bayar' ? 'Belum Bayar' : 'Sudah Bayar';
+
+		try {
+			await updateTransaksi(transaksi.id, { status: newStatus });
+			transaksiList = transaksiList.map((t) =>
+				t.id === transaksi.id ? { ...t, status: newStatus } : t
+			);
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'Terjadi kesalahan saat mengupdate status';
 		}
 	}
 
@@ -52,11 +133,29 @@
 		});
 	}
 
-	const filteredList = $derived(transaksiList.filter(t => {
-		if (filterKategori && t.kategori !== filterKategori) return false;
-		if (filterStatus && t.status !== filterStatus) return false;
-		return true;
-	}));
+	const filteredList = $derived(
+		transaksiList
+			.filter((t) => {
+				if (filterKategori && t.kategori !== filterKategori) return false;
+				if (filterStatus && t.status !== filterStatus) return false;
+
+				// Filter pencarian
+				if (searchQuery) {
+					const query = searchQuery.toLowerCase();
+					const matchKategori = t.kategori.toLowerCase().includes(query);
+					const matchMetode = t.metode?.toLowerCase().includes(query);
+					const matchCatatan = t.catatan?.toLowerCase().includes(query);
+					const matchTanggal = formatDate(t.tanggal).toLowerCase().includes(query);
+
+					if (!matchKategori && !matchMetode && !matchCatatan && !matchTanggal) {
+						return false;
+					}
+				}
+
+				return true;
+			})
+			.sort((a, b) => new Date(b.tanggal).getTime() - new Date(a.tanggal).getTime())
+	);
 </script>
 
 <svelte:head>
@@ -82,6 +181,7 @@
 					<input
 						type="text"
 						placeholder="Cari transaksi..."
+						bind:value={searchQuery}
 						class="glass-input w-full px-4 py-2 rounded-lg"
 					/>
 				</div>
@@ -108,7 +208,9 @@
 		<div class="overflow-x-auto">
 			{#if $isLoading}
 				<div class="p-12 text-center">
-					<div class="animate-spin w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+					<div
+						class="animate-spin w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full mx-auto mb-4"
+					></div>
 					<p class="text-white/60">Memuat data...</p>
 				</div>
 			{:else if filteredList.length === 0}
@@ -134,25 +236,140 @@
 							<tr class="border-t border-white/5 hover:bg-white/5 transition-colors">
 								<td class="px-4 py-3 text-white">{formatDate(transaksi.tanggal)}</td>
 								<td class="px-4 py-3 text-white">{transaksi.kategori}</td>
-								<td class="px-4 py-3 text-white font-mono">{formatCurrency(transaksi.nilaiHarta)}</td>
-								<td class="px-4 py-3 text-primary-400 font-mono">{formatCurrency(transaksi.zakatWajib)}</td>
+								<td class="px-4 py-3 text-white font-mono"
+									>{formatCurrency(transaksi.nilaiHarta)}</td
+								>
+								<td class="px-4 py-3 text-primary-400 font-mono"
+									>{formatCurrency(transaksi.zakatWajib)}</td
+								>
 								<td class="px-4 py-3">
-									<span class="px-2 py-1 rounded-full text-xs {transaksi.status === 'Sudah Bayar' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}">
+									<span
+										class="px-2 py-1 rounded-full text-xs {transaksi.status === 'Sudah Bayar'
+											? 'bg-green-500/20 text-green-400'
+											: 'bg-yellow-500/20 text-yellow-400'}"
+									>
 										{transaksi.status}
 									</span>
 								</td>
 								<td class="px-4 py-3">
-									<button
-										onclick={() => handleDelete(transaksi.id)}
-										class="text-red-400 hover:text-red-300 text-sm transition-colors"
-									>
-										Hapus
-									</button>
+									<div class="flex gap-2">
+										<button
+											onclick={() => handleToggleStatus(transaksi)}
+											class="text-primary-400 hover:text-primary-300 text-sm transition-colors"
+										>
+											{transaksi.status === 'Sudah Bayar' ? 'Tandai Belum' : 'Tandai Sudah'}
+										</button>
+										<button
+											onclick={() => handleDelete(transaksi.id)}
+											class="text-red-400 hover:text-red-300 text-sm transition-colors"
+										>
+											Hapus
+										</button>
+									</div>
 								</td>
 							</tr>
+							{#if transaksi.metode || transaksi.catatan}
+								<tr class="border-b border-white/5 bg-white/[0.02]">
+									<td colspan="6" class="px-4 py-2 text-sm">
+										{#if transaksi.metode}
+											<p class="text-white/70">
+												<span class="text-white/50">Detail:</span>
+												{transaksi.metode}
+											</p>
+										{/if}
+										{#if transaksi.catatan}
+											<p class="text-white/50 text-xs mt-1">{transaksi.catatan}</p>
+										{/if}
+									</td>
+								</tr>
+							{/if}
 						{/each}
 					</tbody>
 				</table>
+			{/if}
+		</div>
+
+		<!-- Maintenance Section -->
+		<div class="mt-6 p-4 bg-white/5 rounded-xl">
+			<div class="flex items-center justify-between">
+				<div>
+					<h3 class="text-white font-semibold">🔧 Perbaikan Data</h3>
+					<p class="text-white/60 text-sm">Periksa dan bersihkan data yang bermasalah</p>
+				</div>
+				<div class="flex gap-2">
+					<button
+						onclick={checkDataStatus}
+						class="px-4 py-2 bg-primary-500/20 hover:bg-primary-500/30 text-primary-400 rounded-lg text-sm transition-colors"
+					>
+						Periksa Data
+					</button>
+					{#if maintenanceStatus?.needsCleanup}
+						<button
+							onclick={cleanupData}
+							disabled={cleaning}
+							class="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg text-sm transition-colors disabled:opacity-50"
+						>
+							{cleaning ? 'Membersihkan...' : 'Bersihkan Data'}
+						</button>
+					{/if}
+					<button
+						onclick={resetData}
+						disabled={cleaning}
+						class="px-4 py-2 bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 rounded-lg text-sm transition-colors disabled:opacity-50"
+					>
+						Reset Data
+					</button>
+				</div>
+			</div>
+
+			{#if maintenanceStatus}
+				<div class="mt-4 p-4 bg-black/20 rounded-lg">
+					{#if maintenanceStatus.analysis}
+						<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+							<div class="text-center">
+								<p class="text-2xl font-bold text-white">{maintenanceStatus.analysis.totalRows}</p>
+								<p class="text-white/60 text-xs">Total Baris</p>
+							</div>
+							<div class="text-center">
+								<p class="text-2xl font-bold text-green-400">
+									{maintenanceStatus.analysis.validRows}
+								</p>
+								<p class="text-white/60 text-xs">Valid</p>
+							</div>
+							<div class="text-center">
+								<p class="text-2xl font-bold text-yellow-400">
+									{maintenanceStatus.analysis.emptyRows}
+								</p>
+								<p class="text-white/60 text-xs">Kosong</p>
+							</div>
+							<div class="text-center">
+								<p class="text-2xl font-bold text-red-400">
+									{maintenanceStatus.analysis.duplicateIds.length}
+								</p>
+								<p class="text-white/60 text-xs">Duplikat</p>
+							</div>
+						</div>
+
+						{#if maintenanceStatus.analysis.sampleData.length > 0}
+							<div class="mt-4">
+								<p class="text-white/60 text-sm mb-2">Contoh Data:</p>
+								<div class="space-y-1">
+									{#each maintenanceStatus.analysis.sampleData as sample}
+										<div class="flex gap-4 text-sm">
+											<span class="text-white/40">Baris {sample.row}:</span>
+											<span class="text-white">{sample.kategori}</span>
+											<span class="text-white/60">({sample.status})</span>
+										</div>
+									{/each}
+								</div>
+							</div>
+						{/if}
+					{/if}
+
+					{#if maintenanceStatus.message}
+						<p class="text-green-400 text-sm mt-4">{maintenanceStatus.message}</p>
+					{/if}
+				</div>
 			{/if}
 		</div>
 	</div>
